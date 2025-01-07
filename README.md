@@ -2,6 +2,7 @@
 
 https://github.com/vidstack/player  
 
+这个插件不推荐内地网站使用，因为里面的模块是远程调用，内地加载速度有点慢。  
 
 
 插件功能：  
