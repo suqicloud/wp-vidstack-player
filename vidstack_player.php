@@ -47,13 +47,13 @@ function vidstack_player_shortcode($atts) {
         // YouTube视频
         $youtube_video_id = $matches[1];
         $output = "<div class=\"vidstack-player\">
-                    <iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/{$youtube_video_id}\" frameborder=\"0\" allow=\"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>
+                    <iframe width=\"600\" height=\"400\" src=\"https://www.youtube.com/embed/{$youtube_video_id}\" frameborder=\"0\" allow=\"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>
                 </div>";
     } elseif (preg_match($bilibili_pattern, $video_links[0], $matches)) {
         // Bilibili视频
         $bilibili_bv = $matches[2];
         $output = "<div class=\"vidstack-player\">
-                    <iframe src=\"//player.bilibili.com/player.html?bvid={$bilibili_bv}&autoplay=0\" width=\"560\" height=\"315\" scrolling=\"no\" border=\"0\" frameborder=\"no\" framespacing=\"0\" allowfullscreen=\"true\"></iframe>
+                    <iframe src=\"//player.bilibili.com/player.html?bvid={$bilibili_bv}&autoplay=0\" width=\"600\" height=\"400\" scrolling=\"no\" border=\"0\" frameborder=\"no\" framespacing=\"0\" allowfullscreen=\"true\"></iframe>
                 </div>";
     } else {
         // 默认Vidstack播放器
