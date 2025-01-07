@@ -31,6 +31,7 @@ function vidstack_player_shortcode($atts) {
     // 提取短代码属性
     $atts = shortcode_atts([
         'src' => '', // 视频或音频链接
+        'poster' => '', // 封面图地址（可选）
     ], $atts, 'vidstack_player');
 
     // 获取视频链接列表
@@ -64,6 +65,7 @@ function vidstack_player_shortcode($atts) {
             <!-- 动态加载Vidstack播放器模块 -->
             <script type="module">
                 window.videoLinks = <?php echo json_encode($video_links); ?>;
+                window.poster = <?php echo json_encode($atts['poster']); ?>;
 
                 const SPANISH = {
                 'Settings': '设置',
@@ -85,6 +87,7 @@ function vidstack_player_shortcode($atts) {
                     const player = await VidstackPlayer.create({
                         target: '#target',
                         src: window.videoLinks[0],
+                        poster: window.poster, // 设置封面图
                         layout: new VidstackPlayerLayout({
                         translations: SPANISH, // 设置语言翻译
                     }),
