@@ -21,3 +21,6 @@ https://github.com/vidstack/player
 
 
 youtube视频和vidstack官方默认的不一样，是用的iframe，我觉得用iframe就可以了，没必要再去加载一个模块。
+
+
+社区反馈：https://iticu.icu/forum
