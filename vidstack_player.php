@@ -14,15 +14,22 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// 注册脚本和样式
-function vidstack_enqueue_assets() {
-    wp_enqueue_style('vidstack-player-theme', 'https://cdn.vidstack.io/player/theme.css', [], null);
-    wp_enqueue_style('vidstack-player-video', 'https://cdn.vidstack.io/player/video.css', [], null);
-    wp_enqueue_style('vidstack-player-audio', 'https://cdn.vidstack.io/player/audio.css', [], null);
+// 检查当前页面是否包含[vidstack_player]短代码
+function vidstack_should_load_assets() {
+    global $post;
+    if (isset($post) && has_shortcode($post->post_content, 'vidstack_player')) {
+        return true;
+    }
+    return false;
+}
 
-    // 注册HLS和DASH支持
-    //wp_register_script('hls-js', 'https://cdn.jsdelivr.net/npm/hls.js@1.5.18/dist/hls.min.js', [], null, true);
-   // wp_register_script('dash-js', 'https://cdn.jsdelivr.net/npm/dashjs@4.7.4/dist/dash.all.min.js', [], null, true);
+// 延迟加载脚本和样式
+function vidstack_enqueue_assets() {
+    if (vidstack_should_load_assets()) {
+        wp_enqueue_style('vidstack-player-theme', 'https://cdn.vidstack.io/player/theme.css', [], null);
+        wp_enqueue_style('vidstack-player-video', 'https://cdn.vidstack.io/player/video.css', [], null);
+        wp_enqueue_style('vidstack-player-audio', 'https://cdn.vidstack.io/player/audio.css', [], null);
+    }
 }
 add_action('wp_enqueue_scripts', 'vidstack_enqueue_assets');
 
