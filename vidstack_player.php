@@ -3,7 +3,7 @@
  * Plugin Name: Vidstack HTML5播放器
  * Plugin URI: https://www.jingxialai.com/4953.html
  * Description: 基于Vidstack的WordPress视频播放器插件，支持mp4、m3u8、mpd视频、mp3等音频格式以及B站和youtube视频.
- * Version: 1.1
+ * Version: 1.2
  * Author: Summer
  * License: GPL License
  * Author URI: https://www.jingxialai.com/
@@ -13,8 +13,7 @@
 if (!defined('ABSPATH')) {
     exit;
 }
-
-// 检查当前页面是否包含[vidstack_player]短代码
+// 检查当前页面是否包含 [vidstack_player] 短代码
 function vidstack_should_load_assets() {
     global $post;
     if (isset($post) && has_shortcode($post->post_content, 'vidstack_player')) {
@@ -101,6 +100,7 @@ function vidstack_player_shortcode($atts) {
                         autoplay: true,
                     });
 
+
                     player.addEventListener('ended', () => {
                         const currentIndex = window.videoLinks.indexOf(player.src);
                         const nextIndex = currentIndex + 1 < window.videoLinks.length ? currentIndex + 1 : null;
@@ -147,81 +147,85 @@ add_shortcode('vidstack_player', 'vidstack_player_shortcode');
 
 // 前台选集按钮事件
 function vidstack_player_js_logic() {
-    ?>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const episodeButtons = document.querySelectorAll('.episode-button');
-            episodeButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const index = button.getAttribute('data-index');
-                    const player = document.querySelector('#target video');
-                    const videoLinks = window.videoLinks;
+    if (has_shortcode(get_post()->post_content, 'vidstack_player')) {
+        ?>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const episodeButtons = document.querySelectorAll('.episode-button');
+                episodeButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const index = button.getAttribute('data-index');
+                        const player = document.querySelector('#target video');
+                        const videoLinks = window.videoLinks;
 
-                    if (videoLinks[index]) {
-                        player.src = videoLinks[index];
-                        player.play();
-                    } else {
-                        console.error("视频链接无效，索引: ", index);
-                    }
+                        if (videoLinks[index]) {
+                            player.src = videoLinks[index];
+                            player.play();
+                        } else {
+                            console.error("视频链接无效，索引: ", index);
+                        }
+                    });
                 });
             });
-        });
-    </script>
-    <?php
+        </script>
+        <?php
+    }
 }
 add_action('wp_footer', 'vidstack_player_js_logic');
 
 // 选集按钮
 function vidstack_player_css_styles() {
-    ?>
-    <style>
-        /* 定制vds-slider组件的样式 */
-        /* 强制应用背景颜色 */
-        :where(.vds-slider .vds-slider-track) {
-            background-color: var(--media-slider-track-bg, rgb(255 255 255 / .3)) !important
-        }   
-        :where(.vds-slider .vds-slider-track-fill) {
-            background-color: var(--media-slider-track-fill-bg, var(--media-brand)) !important
-        }       
-        :where(.vds-slider-step) {
-            background-color: var(--media-slider-step-color, rgb(124, 124, 124)) !important
-        }
-    
-        /* 按钮样式 */
-        .vidstack-episode-buttons {
-            text-align: center;
-            margin-top: 20px;
-        }
+    if (has_shortcode(get_post()->post_content, 'vidstack_player')) {
+        ?>
+        <style>
+            /* 定制vds-slider组件的样式 */
+            /* 强制应用背景颜色 */
+            :where(.vds-slider .vds-slider-track) {
+                background-color: var(--media-slider-track-bg, rgb(255 255 255 / .3)) !important
+            }   
+            :where(.vds-slider .vds-slider-track-fill) {
+                background-color: var(--media-slider-track-fill-bg, var(--media-brand)) !important
+            }       
+            :where(.vds-slider-step) {
+                background-color: var(--media-slider-step-color, rgb(124, 124, 124)) !important
+            }
+        
+            /* 按钮样式 */
+            .vidstack-episode-buttons {
+                text-align: center;
+                margin-top: 20px;
+            }
 
-        .vidstack-episode-buttons .episode-button {
-            background-color: #007bff;
-            color: white;
-            border: 2px solid #007bff;
-            border-radius: 5px;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 5px;
-        }
+            .vidstack-episode-buttons .episode-button {
+                background-color: #007bff;
+                color: white;
+                border: 2px solid #007bff;
+                border-radius: 5px;
+                padding: 10px 20px;
+                font-size: 16px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                margin: 5px;
+            }
 
-        .vidstack-episode-buttons .episode-button:hover {
-            background-color: #0056b3;
-            border-color: #0056b3;
-        }
+            .vidstack-episode-buttons .episode-button:hover {
+                background-color: #0056b3;
+                border-color: #0056b3;
+            }
 
-        .vidstack-episode-buttons .episode-button:active {
-            background-color: #003f7f;
-            border-color: #003f7f;
-        }
-    </style>
-    <?php
+            .vidstack-episode-buttons .episode-button:active {
+                background-color: #003f7f;
+                border-color: #003f7f;
+            }
+        </style>
+        <?php
+    }
 }
 add_action('wp_head', 'vidstack_player_css_styles');
 
 // 经典编辑器快捷键
 function wp_vidstack_register_tinymce_plugin($plugin_array) {
-    $plugin_array['wp_vidstack_button'] = plugin_dir_url(__FILE__) . 'wp-vidstack-tinymce.js';
+    $plugin_array['wp_vidstack_button'] = plugin_dir_url(__FILE__) . 'assets/wp-vidstack-tinymce.js';
     return $plugin_array;
 }
 
