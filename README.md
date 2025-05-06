@@ -1,26 +1,23 @@
-基于vidstack  
+WordPress Video Player Plugin Based on the Vidstack Player。
 
 https://github.com/vidstack/player  
 
-这个插件不推荐内地网站使用，因为里面的模块是远程调用，内地加载速度有点慢。  
 
+Plugin Features:
 
-插件功能：  
-支持mp4、 ogg、ogv、webm、mov、m4v，m3u8、mpd视频格式  
-支持m4a, m4b, mp4a, mpga, mp2, mp2a, mp3, m2a, m3a, wav, weba, aac, oga, spx音频格式  
-支持b站视频  
-支持youtube视频 
-支持添加多个视频链接  
-支持自动播放下一集(多集视频)  
-经典编辑器快捷键入口  
-可以设置封面  
-播放器默认带画中画、全屏、Google Cast、一些其他设置(重播、无障碍)  
+Supports mp4, ogg, ogv, webm, mov, m4v, m3u8, mpd video formats
+Supports m4a, m4b, mp4a, mpga, mp2, mp2a, mp3, m2a, m3a, wav, weba, aac, oga, spx audio formats
+Supports Bilibili videos
+Supports YouTube videos, with the ability to add multiple video links
+Supports auto-playing the next episode (for multi-episode videos)
+Shortcut entry for classic editor
+Option to set a cover image
+Player includes picture-in-picture, full-screen, Google Cast, and other settings (replay, accessibility) by default
+Basic Features:
+Same as other player plugins, just with a different player framework.
 
-
-基础功能和其他播放器插件都一样，就是播放器框架不一样。  
-
-
-youtube视频和vidstack官方默认的不一样，是用的iframe，我觉得用iframe就可以了，没必要再去加载一个模块。
+Note on YouTube Videos:
+Unlike the default Vidstack setup, YouTube videos use an iframe. I think using an iframe is sufficient and there's no need to load an additional module.
 
 
 
