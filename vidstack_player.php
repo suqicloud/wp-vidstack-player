@@ -1,19 +1,20 @@
 <?php
 /**
- * Plugin Name: Vidstack HTML5播放器
+ * Plugin Name: Vidstack HTML5 Player
  * Plugin URI: https://www.jingxialai.com/4953.html
- * Description: 基于Vidstack的WordPress视频播放器插件，支持mp4、m3u8、mpd视频、mp3等音频格式以及B站和youtube视频.
- * Version: 1.2
+ * Description: A WordPress video player plugin based on Vidstack, supporting mp4, m3u8, mpd videos, mp3 audio formats, and Bilibili and YouTube videos.
+ * Version: 1.3
  * Author: Summer
  * License: GPL License
  * Author URI: https://www.jingxialai.com/
  */
 
-// 防止直接访问文件
+// Prevent direct file access
 if (!defined('ABSPATH')) {
     exit;
 }
-// 检查当前页面是否包含 [vidstack_player] 短代码
+
+// Check if the current page contains the [vidstack_player] shortcode
 function vidstack_should_load_assets() {
     global $post;
     if (isset($post) && has_shortcode($post->post_content, 'vidstack_player')) {
@@ -22,7 +23,7 @@ function vidstack_should_load_assets() {
     return false;
 }
 
-// 延迟加载脚本和样式
+// Defer loading scripts and styles
 function vidstack_enqueue_assets() {
     if (vidstack_should_load_assets()) {
         wp_enqueue_style('vidstack-player-theme', 'https://cdn.vidstack.io/player/theme.css', [], null);
@@ -32,60 +33,60 @@ function vidstack_enqueue_assets() {
 }
 add_action('wp_enqueue_scripts', 'vidstack_enqueue_assets');
 
-// 注册短代码[vidstack_player]
+// Register shortcode [vidstack_player]
 function vidstack_player_shortcode($atts) {
-    // 提取短代码属性
+    // Extract shortcode attributes
     $atts = shortcode_atts([
-        'src' => '', // 视频或音频链接
-        'poster' => '', // 封面图地址（可选）
+        'src' => '', // Video or audio link
+        'poster' => '', // Poster image URL (optional)
     ], $atts, 'vidstack_player');
 
-    // 获取视频链接列表
+    // Get video links list
     $video_links = explode(',', $atts['src']);
     $num_videos = count($video_links);
 
-    // 正则判断是否为YouTube视频链接
+    // Regex to check for YouTube video link
     $youtube_pattern = '#(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/]+\/.*\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})#';
-    // 正则判断是否为Bilibili视频链接
+    // Regex to check for Bilibili video link
     $bilibili_pattern = '#https?:\/\/(www\.)?bilibili\.com\/video\/(BV[a-zA-Z0-9]{10})#';
 
-    // 判断视频类型，生成对应的iframe嵌入代码
+    // Determine video type and generate corresponding iframe embed code
     if (preg_match($youtube_pattern, $video_links[0], $matches)) {
-        // YouTube视频
+        // YouTube video
         $youtube_video_id = $matches[1];
         $output = "<div class=\"vidstack-player\">
                     <iframe width=\"600\" height=\"400\" src=\"https://www.youtube.com/embed/{$youtube_video_id}\" frameborder=\"0\" allow=\"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>
                 </div>";
     } elseif (preg_match($bilibili_pattern, $video_links[0], $matches)) {
-        // Bilibili视频
+        // Bilibili video
         $bilibili_bv = $matches[2];
         $output = "<div class=\"vidstack-player\">
                     <iframe src=\"//player.bilibili.com/player.html?bvid={$bilibili_bv}&autoplay=0\" width=\"600\" height=\"400\" scrolling=\"no\" border=\"0\" frameborder=\"no\" framespacing=\"0\" allowfullscreen=\"true\"></iframe>
                 </div>";
     } else {
-        // 默认Vidstack播放器
+        // Default Vidstack player
         ob_start(); ?>
         <div id="vidstack-player-container" class="vidstack-player-container">
-            <div id="target"></div> <!-- 播放器目标容器 -->
+            <div id="target"></div> <!-- Player target container -->
             
-            <!-- 动态加载Vidstack播放器模块 -->
+            <!-- Dynamically load Vidstack player module -->
             <script type="module">
                 window.videoLinks = <?php echo json_encode($video_links); ?>;
                 window.poster = <?php echo json_encode($atts['poster']); ?>;
 
                 const SPANISH = {
-                'Settings': '设置',
-                'Mute': '音量',
-                'Play': '播放',
-                'Enter PiP': '画中画',
-                'Enter Fullscreen': '全屏',
-                'Playback': '重播',
-                'Loop': '循环',
-                'Audio': '音频',
-                'Accessibility': '无障碍环境',
-                'Announcements': '通知',
-                'Keyboard Animations': '键盘动态效果',
-            };
+                    'Settings': 'settings',
+                    'Mute': 'mute',
+                    'Play': 'play',
+                    'Enter PiP': 'enter_pip',
+                    'Enter Fullscreen': 'enter_fullscreen',
+                    'Playback': 'playback',
+                    'Loop': 'loop',
+                    'Audio': 'audio',
+                    'Accessibility': 'accessibility',
+                    'Announcements': 'announcements',
+                    'Keyboard Animations': 'keyboard_animations',
+                };
 
                 import { VidstackPlayer, VidstackPlayerLayout } from 'https://cdn.vidstack.io/player';
 
@@ -93,13 +94,12 @@ function vidstack_player_shortcode($atts) {
                     const player = await VidstackPlayer.create({
                         target: '#target',
                         src: window.videoLinks[0],
-                        poster: window.poster, // 设置封面图
+                        poster: window.poster, // Set poster image
                         layout: new VidstackPlayerLayout({
-                        translations: SPANISH, // 设置语言翻译
-                    }),
+                            translations: SPANISH, // Set language translations
+                        }),
                         autoplay: true,
                     });
-
 
                     player.addEventListener('ended', () => {
                         const currentIndex = window.videoLinks.indexOf(player.src);
@@ -118,7 +118,7 @@ function vidstack_player_shortcode($atts) {
                                 player.src = window.videoLinks[index];
                                 player.play();
                             } else {
-                                console.error("视频链接无效，索引: ", index);
+                                console.error("Invalid video link, index: ", index);
                             }
                         });
                     });
@@ -129,11 +129,11 @@ function vidstack_player_shortcode($atts) {
         </div>
 
         <?php
-        // 生成选集按钮
+        // Generate episode buttons
         if ($num_videos > 1) {
             echo '<div class="vidstack-episode-buttons">';
             foreach ($video_links as $index => $video_url) {
-                echo "<button class='episode-button' data-index='{$index}'>第" . ($index + 1) . "集</button>";
+                echo "<button class='episode-button' data-index='{$index}'>Episode " . ($index + 1) . "</button>";
             }
             echo '</div>';
         }
@@ -145,7 +145,7 @@ function vidstack_player_shortcode($atts) {
 }
 add_shortcode('vidstack_player', 'vidstack_player_shortcode');
 
-// 前台选集按钮事件
+// Frontend episode button events
 function vidstack_player_js_logic() {
     if (has_shortcode(get_post()->post_content, 'vidstack_player')) {
         ?>
@@ -162,7 +162,7 @@ function vidstack_player_js_logic() {
                             player.src = videoLinks[index];
                             player.play();
                         } else {
-                            console.error("视频链接无效，索引: ", index);
+                            console.error("Invalid video link, index: ", index);
                         }
                     });
                 });
@@ -173,13 +173,13 @@ function vidstack_player_js_logic() {
 }
 add_action('wp_footer', 'vidstack_player_js_logic');
 
-// 选集按钮
+// Episode buttons
 function vidstack_player_css_styles() {
     if (has_shortcode(get_post()->post_content, 'vidstack_player')) {
         ?>
         <style>
-            /* 定制vds-slider组件的样式 */
-            /* 强制应用背景颜色 */
+            /* Customize vds-slider component styles */
+            /* Force apply background color */
             :where(.vds-slider .vds-slider-track) {
                 background-color: var(--media-slider-track-bg, rgb(255 255 255 / .3)) !important
             }   
@@ -190,7 +190,7 @@ function vidstack_player_css_styles() {
                 background-color: var(--media-slider-step-color, rgb(124, 124, 124)) !important
             }
         
-            /* 按钮样式 */
+            /* Button styles */
             .vidstack-episode-buttons {
                 text-align: center;
                 margin-top: 20px;
@@ -205,7 +205,7 @@ function vidstack_player_css_styles() {
                 font-size: 16px;
                 cursor: pointer;
                 transition: all 0.3s ease;
-                margin: 5px;
+                margin: 5px !important;
             }
 
             .vidstack-episode-buttons .episode-button:hover {
@@ -223,9 +223,9 @@ function vidstack_player_css_styles() {
 }
 add_action('wp_head', 'vidstack_player_css_styles');
 
-// 经典编辑器快捷键
+// Classic editor shortcut
 function wp_vidstack_register_tinymce_plugin($plugin_array) {
-    $plugin_array['wp_vidstack_button'] = plugin_dir_url(__FILE__) . 'assets/wp-vidstack-tinymce.js';
+    $plugin_array['wp_vidstack_button'] = plugin_dir_url(__FILE__) . 'wp-vidstack-tinymce.js';
     return $plugin_array;
 }
 
@@ -246,5 +246,43 @@ function wp_vidstack_add_tinymce_plugin() {
     add_filter('mce_external_plugins', 'wp_vidstack_register_tinymce_plugin');
     add_filter('mce_buttons', 'wp_vidstack_add_tinymce_button');
 }
-
 add_action('init', 'wp_vidstack_add_tinymce_plugin');
+
+// Gutenberg editor quick insert
+function vidstack_gutenberg_register_block() {
+    wp_register_script(
+        'vidstack-block',
+        plugins_url('wp-vidstack-block.js', __FILE__),
+        array('wp-blocks', 'wp-editor', 'wp-components', 'wp-element'),
+        filemtime(plugin_dir_path(__FILE__) . 'wp-vidstack-block.js')
+    );
+
+    register_block_type('vidstack/player', array(
+        'editor_script' => 'vidstack-block',
+    ));
+}
+add_action('init', 'vidstack_gutenberg_register_block');
+
+// Uninstall plugin
+register_uninstall_hook(__FILE__, 'vidstack_plugin_uninstall');
+function vidstack_plugin_uninstall() {
+    // Remove all episode button related scripts
+    remove_action('wp_footer', 'vidstack_player_js_logic');
+
+    // Remove all frontend styles
+    remove_action('wp_head', 'vidstack_player_css_styles');
+
+    // Remove all frontend scripts
+    remove_action('wp_enqueue_scripts', 'vidstack_enqueue_assets');
+
+    // Remove shortcode
+    remove_shortcode('vidstack_player');
+
+    // Remove classic editor button and related scripts
+    remove_filter('mce_external_plugins', 'wp_vidstack_register_tinymce_plugin');
+    remove_filter('mce_buttons', 'wp_vidstack_add_tinymce_button');
+
+    // Remove Gutenberg editor related code
+    unregister_block_type('vidstack/player');
+}
+?>

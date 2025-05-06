@@ -1,16 +1,16 @@
 (function() {
     tinymce.PluginManager.add('wp_vidstack_button', function(editor, url) {
         editor.addButton('wp_vidstack_button', {
-            text: 'Vidstack视频',
+            text: 'Vidstack Video',
             icon: false,
             onclick: function() {
                 editor.windowManager.open({
-                    title: 'Vidstack视频',
+                    title: 'Vidstack Video',
                     body: [
                         {
                             type: 'textbox',
                             name: 'vidstack_urls',
-                            label: '视频链接(一行一个)',
+                            label: 'Video URLs (one per line)',
                             multiline: true,
                             minWidth: 300,
                             minHeight: 100
@@ -18,17 +18,17 @@
                         {
                             type: 'textbox',
                             name: 'vidstack_url',
-                            label: '封面图地址 (可选)',
-                            value: '', // 初始值为空
+                            label: 'Poster Image URL (optional)',
+                            value: '', // Initial value is empty
                             minWidth: 300
                         },
                         {
                             type: 'label',
-                            text: '请在上面输入视频的完整链接，多个视频就每行一个。'
+                            text: 'Please enter the full video URLs above, one per line.'
                         },
                         {
                             type: 'label',
-                            text: '如果需要封面图，填写对应的图片地址，留空就不显示封面。'
+                            text: 'If a poster image is needed, enter its URL; leave blank to omit the poster.'
                         }
                     ],
                     onsubmit: function(e) {
@@ -36,18 +36,18 @@
                             return url.trim();
                         }).join(',');
 
-                        // 获取封面图地址，如果填写了，则添加poster参数
+                        // Get poster image URL, add poster parameter if provided
                         var posterUrl = e.data.vidstack_url.trim();
                         var shortcode = '[vidstack_player src="' + videoUrls + '"';
 
-                        // 如果封面图地址不为空，添加poster参数
+                        // If poster URL is not empty, add poster parameter
                         if (posterUrl) {
                             shortcode += ' poster="' + posterUrl + '"';
                         }
 
                         shortcode += ']';
 
-                        // 插入内容
+                        // Insert content
                         editor.insertContent(shortcode);
                     }
                 });
